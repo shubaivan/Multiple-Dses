@@ -1,0 +1,3 @@
+server.port=8081
+master_card_gate.path=http://127.0.0.1:8082/mc
+visa_gate.path=http://127.0.0.1:8083/vc
