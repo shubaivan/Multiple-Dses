@@ -12,13 +12,6 @@ import java.util.Map;
 
 @Configuration
 public class StrategyConfiguration {
-
-    @Value("${master_card_gate.path}")
-    private String masterCardGatePath;
-
-    @Value("${visa_gate.path}")
-    private String visaCardGatePath;
-
     @Bean("cardStrategyMap")
     public Map<CardType, MainStrategy> cardStrategyMap(MainStrategy masterCardStrategy, VisaCardStrategy visaCardStrategy){
         return Map.of(

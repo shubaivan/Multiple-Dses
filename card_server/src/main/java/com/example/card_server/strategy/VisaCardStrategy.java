@@ -2,7 +2,6 @@ package com.example.card_server.strategy;
 
 import com.example.card_server.dto.CardDTOInterface;
 import com.example.card_server.dto.VisaCardDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Service
-public class VisaCardStrategy implements MainStrategy {
+public class VisaCardStrategy extends ParentMainStrategy {
 
+    public static final String ACCT_NUMBER_ACCT_NUMBER = "{\"acctNumber\": \"{{acctNumber}}}\"";
     @Value("${visa_gate.path}")
     private String visaCardGatePath;
 
@@ -23,14 +23,12 @@ public class VisaCardStrategy implements MainStrategy {
         con.setRequestProperty("Authorization", "Bearer token-from-application-config");
         con.setDoOutput(true);
         con.setRequestMethod("POST");
-        String jsonInputString = "{\"acctNumber\": \"{{acctNumber}}}\"".replace("{{acctNumber}}", acctNumber);
+        String jsonInputString = ACCT_NUMBER_ACCT_NUMBER.replace("{{acctNumber}}", acctNumber);
 
         try(OutputStream os = con.getOutputStream()) {
             byte[] input = jsonInputString.getBytes("utf-8");
             os.write(input, 0, input.length);
         }
-
-
 
         int status = con.getResponseCode();
 
@@ -54,9 +52,6 @@ public class VisaCardStrategy implements MainStrategy {
 
         con.disconnect();
 
-        ObjectMapper mapper = new ObjectMapper();
-        VisaCardDTO masterCardDTO = mapper.readValue(content.toString(), VisaCardDTO.class);
-
-        return masterCardDTO;
+        return this.objectHandler.handleObject(content.toString(), VisaCardDTO.class);
     }
 }
